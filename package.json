@@ -6,7 +6,9 @@
     "test": "test"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "knex": "knex",
+    "heroku-postbuild": "knex migrate:latest"
   },
   "license": "MIT",
   "dependencies": {

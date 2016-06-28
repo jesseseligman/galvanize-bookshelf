@@ -100,5 +100,10 @@ exports.seed = function(knex) {
         created_at: new Date('2016-06-26 14:26:16 UTC'),
         updated_at: new Date('2016-06-26 14:26:16 UTC')
       }])
+    })
+    .then(() => {
+    return knex.raw(
+      "SELECT setval('authors_id_seq', (SELECT MAX(id) FROM authors));"
+      );
     });
 };

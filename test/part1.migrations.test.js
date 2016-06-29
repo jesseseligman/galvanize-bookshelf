@@ -4,10 +4,9 @@ process.env.NODE_ENV = 'test';
 
 const assert = require('chai').assert;
 const {suite, test} = require('mocha');
-const request = require('supertest');
 const knex = require('../knex');
 
-suite('migrations', () => {
+suite('part1 migrations', () => {
   before(function(done) {
     knex.migrate.latest()
       .then(() => {

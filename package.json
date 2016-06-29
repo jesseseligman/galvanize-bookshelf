@@ -2,9 +2,6 @@
   "name": "galvanize-bookshelf",
   "version": "1.0.0",
   "description": "Create a web application to manage your book collection",
-  "directories": {
-    "test": "test"
-  },
   "scripts": {
     "test": "mocha",
     "knex": "knex",
@@ -14,7 +11,6 @@
   "dependencies": {
     "bcrypt": "^0.8.7",
     "body-parser": "^1.15.2",
-    "chai": "^3.5.0",
     "cookie-parser": "^1.4.3",
     "cookie-session": "^2.0.0-alpha.1",
     "express": "^4.14.0",
@@ -29,6 +25,7 @@
   },
 
   "devDependencies": {
+    "chai": "^3.5.0",
     "foreman": "^1.4.1",
     "mocha": "^2.5.3",
     "nodemon": "^1.9.2",

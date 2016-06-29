@@ -8,19 +8,9 @@ const request = require('supertest');
 const knex = require('../knex');
 const server = require('../server');
 
-suite('authors routes', () => {
+suite('part2 routes authors', () => {
   before(function(done) {
     knex.migrate.latest()
-      .then(() => {
-        done();
-      })
-      .catch((err) => {
-        done(err);
-      });
-  });
-
-  after(function(done) {
-    knex.migrate.rollback()
       .then(() => {
         done();
       })
@@ -167,23 +157,17 @@ suite('authors routes', () => {
         portrait_url: 'https://s3-us-west-2.amazonaws.com/assessment-images/galvanize_reads/photos/allen_downey.jpg'
       })
       .expect('Content-Type', /json/)
-      .expect(200)
-      .end((err, res) => {
-        if(err) {
-          return done(err);
-        }
-
+      .expect((res) => {
         delete res.body.created_at;
         delete res.body.updated_at;
-        assert.deepEqual(res.body, {
-          id: 13,
-          first_name: 'Allen B.',
-          last_name: 'Downey',
-          biography: 'Allen Downey is a Professor of Computer Science at Olin College of Engineering. He has taught at Wellesley College, Colby College and U.C. Berkeley. He has a Ph.D. in Computer Science from U.C. Berkeley and Master\'s and Bachelor\'s degrees from MIT.',
-          portrait_url: 'https://s3-us-west-2.amazonaws.com/assessment-images/galvanize_reads/photos/allen_downey.jpg'
-        });
-        done();
-      });
+      })
+      .expect(200, {
+        id: 13,
+        first_name: 'Allen B.',
+        last_name: 'Downey',
+        biography: 'Allen Downey is a Professor of Computer Science at Olin College of Engineering. He has taught at Wellesley College, Colby College and U.C. Berkeley. He has a Ph.D. in Computer Science from U.C. Berkeley and Master\'s and Bachelor\'s degrees from MIT.',
+        portrait_url: 'https://s3-us-west-2.amazonaws.com/assessment-images/galvanize_reads/photos/allen_downey.jpg'
+      }, done);
   });
 
   test('PATCH /authors/:id', (done) => {
@@ -196,78 +180,57 @@ suite('authors routes', () => {
         portrait_url: 'https://s3-us-west-2.amazonaws.com/assessment-images/galvanize_reads/photos/allen_downey.jpg'
       })
       .expect('Content-Type', /json/)
-      .expect(200)
-      .end((err, res) => {
-        if(err) {
-          return done(err);
-        }
-
+      .expect((res) => {
         delete res.body.created_at;
         delete res.body.updated_at;
-        assert.deepEqual(res.body, {
-          id: 2,
-          first_name: 'Allen B.',
-          last_name: 'Downey',
-          biography: 'Allen Downey is a Professor of Computer Science at Olin College of Engineering. He has taught at Wellesley College, Colby College and U.C. Berkeley. He has a Ph.D. in Computer Science from U.C. Berkeley and Master\'s and Bachelor\'s degrees from MIT.',
-          portrait_url: 'https://s3-us-west-2.amazonaws.com/assessment-images/galvanize_reads/photos/allen_downey.jpg'
-        });
-        done();
-      });
+      })
+      .expect(200, {
+        id: 2,
+        first_name: 'Allen B.',
+        last_name: 'Downey',
+        biography: 'Allen Downey is a Professor of Computer Science at Olin College of Engineering. He has taught at Wellesley College, Colby College and U.C. Berkeley. He has a Ph.D. in Computer Science from U.C. Berkeley and Master\'s and Bachelor\'s degrees from MIT.',
+        portrait_url: 'https://s3-us-west-2.amazonaws.com/assessment-images/galvanize_reads/photos/allen_downey.jpg'
+      }, done);
   });
 
   test('DELETE /authors/:id', (done) => {
     request(server)
       .del('/authors/2')
       .expect('Content-Type', /json/)
-      .expect(200)
-      .end((err, res) => {
-        if(err) {
-          return done(err);
-        }
-
+      .expect((res) => {
         delete res.body.created_at;
         delete res.body.updated_at;
-        assert.deepEqual(res.body, {
-          first_name: 'Anna',
-          last_name: 'Ravenscroft',
-          biography: 'Anna Martelli Ravenscroft is an experienced speaker and trainer, with diverse background developing curricula for church, regional transit, disaster preparedness; developing web applications for therapy, learning, fitness; writing technical books, articles and presentations; active member of Open Source community; skilled at translating between IT professionals and end users.',
-          portrait_url: 'https://s3-us-west-2.amazonaws.com/assessment-images/galvanize_reads/photos/anna_ravenscroft.jpg'
-        });
-        done();
-      });
+      })
+      .expect(200, {
+        first_name: 'Anna',
+        last_name: 'Ravenscroft',
+        biography: 'Anna Martelli Ravenscroft is an experienced speaker and trainer, with diverse background developing curricula for church, regional transit, disaster preparedness; developing web applications for therapy, learning, fitness; writing technical books, articles and presentations; active member of Open Source community; skilled at translating between IT professionals and end users.',
+        portrait_url: 'https://s3-us-west-2.amazonaws.com/assessment-images/galvanize_reads/photos/anna_ravenscroft.jpg'
+      }, done);
   });
 
   test('GET /authors/:id/books', (done) => {
     request(server)
       .get('/authors/2/books')
       .expect('Content-Type', /json/)
-      .expect(200)
-      .end((err, res) => {
-        if(err) {
-          return done(err);
-        }
-
-        assert.deepEqual(res.body, [{
-          id: 1,
-          author_id: 2,
-          title: 'Python In A Nutshell',
-          genre: 'Python',
-          description: 'This book offers Python programmers one place to look when they need help remembering or deciphering the syntax of this open source language and its many powerful but scantily documented modules. This comprehensive reference guide makes it easy to look up the most frequently needed information--not just about the Python language itself, but also the most frequently used parts of the standard library and the most important third-party extensions.',
-          cover_url: 'https://s3-us-west-2.amazonaws.com/assessment-images/galvanize_reads/photos/python_in_a_nutshell.jpg',
-          created_at: new Date('2016-06-26 14:26:16 UTC').toISOString(),
-          updated_at: new Date('2016-06-26 14:26:16 UTC').toISOString()
-        }, {
-          id: 2,
-          author_id: 2,
-          title: 'Think Python',
-          genre: 'Python',
-          description: 'If you want to learn how to program, working with Python is an excellent way to start. This hands-on guide takes you through the language a step at a time, beginning with basic programming concepts before moving on to functions, recursion, data structures, and object-oriented design. This second edition and its supporting code have been updated for Python 3.',
-          cover_url: 'https://s3-us-west-2.amazonaws.com/assessment-images/galvanize_reads/photos/think_python.jpg',
-          created_at: new Date('2016-06-26 14:26:16 UTC').toISOString(),
-          updated_at: new Date('2016-06-26 14:26:16 UTC').toISOString()
-        }]);
-        done();
-      });
+      .expect(200, [{
+        id: 1,
+        author_id: 2,
+        title: 'Python In A Nutshell',
+        genre: 'Python',
+        description: 'This book offers Python programmers one place to look when they need help remembering or deciphering the syntax of this open source language and its many powerful but scantily documented modules. This comprehensive reference guide makes it easy to look up the most frequently needed information--not just about the Python language itself, but also the most frequently used parts of the standard library and the most important third-party extensions.',
+        cover_url: 'https://s3-us-west-2.amazonaws.com/assessment-images/galvanize_reads/photos/python_in_a_nutshell.jpg',
+        created_at: new Date('2016-06-26 14:26:16 UTC').toISOString(),
+        updated_at: new Date('2016-06-26 14:26:16 UTC').toISOString()
+      }, {
+        id: 2,
+        author_id: 2,
+        title: 'Think Python',
+        genre: 'Python',
+        description: 'If you want to learn how to program, working with Python is an excellent way to start. This hands-on guide takes you through the language a step at a time, beginning with basic programming concepts before moving on to functions, recursion, data structures, and object-oriented design. This second edition and its supporting code have been updated for Python 3.',
+        cover_url: 'https://s3-us-west-2.amazonaws.com/assessment-images/galvanize_reads/photos/think_python.jpg',
+        created_at: new Date('2016-06-26 14:26:16 UTC').toISOString(),
+        updated_at: new Date('2016-06-26 14:26:16 UTC').toISOString()
+      }], done);
   });
-
 });

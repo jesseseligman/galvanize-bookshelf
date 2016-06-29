@@ -16,10 +16,20 @@ router.get('/books', (_req, res, next) => {
 });
 
 router.get('/books/:id', (req, res, next) => {
+  const id = Number.parseInt(req.params.id);
+
+  if (Number.isNaN(id)) {
+    return next();
+  }
+
   knex('books')
-    .where('id', req.params.id)
+    .where('id', id)
     .first()
     .then((book) => {
+      if (!book) {
+        return next();
+      }
+
       res.send(book);
     })
     .catch((err) => {
@@ -28,13 +38,56 @@ router.get('/books/:id', (req, res, next) => {
 });
 
 router.post('/books', (req, res, next) => {
-  knex('books')
-    .insert(req.body, '*')
-    .then((books) => {
-      res.send(books[0]);
-    })
-    .catch((err) => {
-      next(err);
+  const newBook = req.body
+
+  if (!newBook.title || newBook.title.trim() === '') {
+    return res
+      .status(400)
+      .set('Content-Type', 'text/plain')
+      .send('title must not be blank');
+  }
+
+  if (!newBook.genre || newBook.genre.trim() === '') {
+    return res
+      .status(400)
+      .set('Content-Type', 'text/plain')
+      .send('genre must not be blank');
+  }
+
+  if (!newBook.description || newBook.description.trim() === '') {
+    return res
+      .status(400)
+      .set('Content-Type', 'text/plain')
+      .send('description must not be blank');
+  }
+
+  if (!newBook.cover_url || newBook.cover_url.trim() === '') {
+    return res
+      .status(400)
+      .set('Content-Type', 'text/plain')
+      .send('cover url must not be blank');
+  }
+
+  const authorId = Number.parseInt(newBook.author_id);
+  // check if id is number?
+
+  knex('authors')
+    .where('id', authorId)
+    .first()
+    .then((author) => {
+      if (!author) {
+        return res
+          .sendStatus(400)
+      }
+
+      knex('books')
+        .insert(newBook, '*')
+        .then((books) => {
+          res.send(books[0]);
+        })
+        .catch((err) => {
+          next(err);
+        });
     });
 });
 

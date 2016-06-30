@@ -116,7 +116,7 @@ router.patch('/books/:id', (req, res, next) => {
           .send('No book with that id exists');
       }
 
-      const authorId = req.body.author_id || book.author_id;
+      const authorId = Number.parseInt(req.body.author_id) || book.author_id;
 
       if (Number.isNaN(authorId)) {
         return res
@@ -135,15 +135,15 @@ router.patch('/books/:id', (req, res, next) => {
               .set('Content-Type', 'text/plain')
               .send('No author with that id exists');
           }
-
-          if (req.)
-        })
-
-      knex('books')
-        .update(req.body, '*')
-        .where('id', req.params.id)
-        .then((books) => {
-          res.send(books[0]);
+          knex('books')
+            .update(req.body, '*')
+            .where('id', req.params.id)
+            .then((books) => {
+              res.send(books[0]);
+            })
+            .catch((err) => {
+              next(err);
+            });
         })
         .catch((err) => {
           next(err);

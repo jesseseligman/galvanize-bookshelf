@@ -19,11 +19,9 @@
     "morgan": "^1.7.0",
     "pg": "^6.0.0"
   },
-
   "engines": {
     "node": "6.2.2"
   },
-
   "devDependencies": {
     "chai": "^3.5.0",
     "foreman": "^1.4.1",

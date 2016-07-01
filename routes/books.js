@@ -110,6 +110,7 @@ router.patch('/books/:id', (req, res, next) => {
     .first()
     .then((book) => {
       if (!book) {
+        console.log('book');
         return res
           .status(400)
           .set('Content-Type', 'text/plain')
@@ -119,6 +120,7 @@ router.patch('/books/:id', (req, res, next) => {
       const authorId = Number.parseInt(req.body.author_id) || book.author_id;
 
       if (Number.isNaN(authorId)) {
+        console.log('author id');
         return res
           .status(400)
           .set('Content-Type', 'text/plain')
@@ -126,10 +128,12 @@ router.patch('/books/:id', (req, res, next) => {
       }
 
       knex('authors')
-        .where(id, authorId)
+        .where('id', authorId)
         .first()
         .then((author) => {
           if (!author) {
+            console.log('author');
+            console.log(authorId);
             return res
               .status(400)
               .set('Content-Type', 'text/plain')

@@ -1,4 +1,4 @@
-# User authentication
+# User Authentication
 
 In this assignment, you'll add the necessary code to allow registered users to authenticate with the system.
 
@@ -45,6 +45,14 @@ Next, update your server to handle the following HTTP request and send the appro
 | `POST`         | `/session`         | `{ "email": "jkrowling@gmail.com", "password": "badpassword" }`  | `401`           | `text/plain`          | `Unauthorized` |
 
 In the `routes/session.js` module, add the necessary middleware to handle above RESTful route table.
+
+Before you get started, run the following shell command to generate a secret key that's used to sign each cookie session.
+
+**NOTE:** Restart your HTTP server after running the following command.
+
+```shell
+openssl rand -hex 64 | ruby -ne 'puts "SESSION_SECRET=" + $_' > .env
+```
 
 You can run the following test suite to verify both the positive and the negative cases when the middleware responds with a `200` or `401` status code.
 
